@@ -1,2 +1,1 @@
-# dino_game_koba
-A copy of the browser game about a running dinosaur
+[![Build Status](https://travis-ci.org/krsch/cpp-starter-project.svg?branch=master)](https://travis-ci.org/krsch/cpp-starter-project)
