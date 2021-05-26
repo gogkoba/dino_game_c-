@@ -1,1 +1,1 @@
-A game similar to Google's dinosaur. Written in C ++. raylib core library
+A game similar to Google's dinosaur. Written in C ++. Raylib core library
