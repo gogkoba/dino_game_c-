@@ -1,1 +1,1 @@
-[![Build Status](https://travis-ci.org/krsch/cpp-starter-project.svg?branch=master)](https://travis-ci.org/krsch/cpp-starter-project)
+A game similar to Google's dinosaur. Written in C ++. raylib core library
