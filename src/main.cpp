@@ -29,9 +29,20 @@ void Playernow(Player *player, EnvItem *envItems, int envItemsLength,
     }
     if (IsKeyDown(KEY_DOWN) && player->canJump == true &&
         !IsKeyDown(KEY_SPACE)) {
+        if (form == 0) {
+            player->position.y += 50;
+        }
         form = 1;
+
+    } else {
+        if (form == 1) {
+            form = 0;
+            player->position.y -= 50;
+        }
     }
+
     auto stopmove = 0;
+
     if (player->position.y + player->speed * delta >= 500) {
         player->speed = 0;
         player->canJump = true;
@@ -43,16 +54,21 @@ void Playernow(Player *player, EnvItem *envItems, int envItemsLength,
         auto yen = envItems[i].rect.y;
         auto width = envItems[i].rect.width;
         auto height = envItems[i].rect.height;
+        auto plwidth = 150;
+        auto plheight = 100;
+        if (form == 0) {
+            plwidth = 100;
+            plheight = 150;
+        }
 
-        if (735 >= (xen + envItems[i].speed * delta) &&
+        if (625 + plwidth >= (xen + envItems[i].speed * delta) &&
             650 <= (xen + envItems[i].speed * delta + width) &&
-            (player->position.y + player->speed * delta + 150) >= yen &&
+            (player->position.y + player->speed * delta + plheight) >= yen &&
             (player->position.y + player->speed * delta) <= yen + height) {
             player->dead = 1;
         }
     }
     player->position.y += player->speed * delta;
-    count = player->speed;
     if (stopmove == 0) {
         player->speed += G * delta;
     }
@@ -87,8 +103,10 @@ int main() {
 
     auto envItemsLength = sizeof(envItems) / sizeof(envItems[0]);
 
-    Texture2D dino = LoadTexture("dino-1.png");
-    Rectangle frameRec = {0.0f, 0.0f, (float)dino.width, (float)dino.height};
+    Texture2D dino1 = LoadTexture("dino-1.png");
+    Texture2D dino2 = LoadTexture("dino-1(1).png");
+    Texture2D dino3 = LoadTexture("dino-2.png");
+    Texture2D dino4 = LoadTexture("dino-2(2).png");
 
     SetTargetFPS(60);
 
@@ -111,12 +129,31 @@ int main() {
                 DrawRectangleRec(envItems[i].rect, envItems[i].color);
             }
 
-            Rectangle playerRN = {650, player.position.y, 100, 150};
-            // Rectangle playerRL = {650, player.position.y, 150, 100};
-
-            // DrawTexture(dino, 650, 500, RED);
-            // DrawTextureRec(dino, frameRec, player.position, RED);
-            DrawRectangleRec(playerRN, RED);
+            if (form == 0) {
+                Rectangle playerRN = {650, player.position.y, 100, 150};
+                if (count < 10) {
+                    DrawTexture(dino1, 650, player.position.y, RED);
+                    count += 1;
+                } else {
+                    DrawTexture(dino2, 650, player.position.y, RED);
+                    count += 1;
+                    if (count == 20) {
+                        count = 0;
+                    }
+                }
+            } else {
+                Rectangle playerRL = {650, player.position.y, 150, 100};
+                if (count < 10) {
+                    DrawTexture(dino3, 650, player.position.y, RED);
+                    count += 1;
+                } else {
+                    DrawTexture(dino4, 650, player.position.y, RED);
+                    count += 1;
+                    if (count == 20) {
+                        count = 0;
+                    }
+                }
+            }
 
             const std::string time = fmt::format("{:.1f}", GetTime());
             DrawText(time.c_str(), 1500, 30, 20, DARKGRAY);
@@ -126,6 +163,7 @@ int main() {
             EndDrawing();
         }
     }
-    UnloadTexture(dino);
+    UnloadTexture(dino1);
+    UnloadTexture(dino2);
     return 0;
 }
