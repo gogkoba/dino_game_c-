@@ -165,5 +165,7 @@ int main() {
     }
     UnloadTexture(dino1);
     UnloadTexture(dino2);
+    UnloadTexture(dino3);
+    UnloadTexture(dino4);
     return 0;
 }
