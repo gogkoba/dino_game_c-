@@ -75,11 +75,11 @@ void Playernow(Player *player, EnvItem *envItems, int envItemsLength,
     for (int i = 1; i < envItemsLength; i++) {
         envItems[i].rect.x += envItems[i].speed * delta;
         if (envItems[i].rect.x + envItems[i].rect.width < 0) {
-            envItems[i].rect.x = std::rand() % 1000 + 1600;
+            envItems[i].rect.x = std::rand() % 2000 + 1600;
         }
     }
     for (int i = 1; i < envItemsLength; i++) {
-        if (envItems[i].speed < 400) {
+        if (envItems[i].speed > -400) {
             envItems[i].speed -= 0.25;
         }
     }
@@ -99,7 +99,8 @@ int main() {
     player.dead = 0;
 
     EnvItem envItems[] = {{{0, 650, 1600, 250}, DARKGRAY, 0},
-                          {{1600, 450, 90, 200}, RED, -200}};
+                          {{1600, 450, 90, 200}, RED, -200},
+                          {{2700, 350, 80, 50}, RED, -300}};
 
     auto envItemsLength = sizeof(envItems) / sizeof(envItems[0]);
 
@@ -155,7 +156,7 @@ int main() {
                 }
             }
 
-            const std::string time = fmt::format("{:.1f}", GetTime());
+            const std::string time = fmt::format("{:.0f}", GetTime());
             DrawText(time.c_str(), 1500, 30, 20, DARKGRAY);
             if (player.dead == 1) {
                 livetime = time;
