@@ -1,8 +1,9 @@
-#include "raylib-cpp.hpp"
+#include <fmt/core.h>
+#include <raylib-cpp.hpp>
 #include <string>
 
-#define G 625
-#define PLAYER_JUMP_SPD 700
+int G = 625;
+int PLAYER_JUMP_SPD = 700;
 
 typedef struct Player {
     Vector2 position;
@@ -19,7 +20,7 @@ typedef struct EnvItem {
 
 auto count = 0;
 auto form = 0;
-auto livetime = 0;
+std::string livetime = "";
 void Playernow(Player *player, EnvItem *envItems, int envItemsLength,
                float delta) {
     if (IsKeyDown(KEY_SPACE) && player->canJump == true) {
@@ -86,9 +87,8 @@ int main() {
 
     auto envItemsLength = sizeof(envItems) / sizeof(envItems[0]);
 
-    Texture2D dino = LoadTexture("resources/dino-1.png");
-    // Texture2D dino = LoadTexture("dino-1.png");
-    // Rectangle frameRec = {0.0f, 0.0f, (float)dino.width, (float)dino.height};
+    Texture2D dino = LoadTexture("dino-1.png");
+    Rectangle frameRec = {0.0f, 0.0f, (float)dino.width, (float)dino.height};
 
     SetTargetFPS(60);
 
@@ -98,9 +98,7 @@ int main() {
             ClearBackground(BLACK);
             DrawText("You are dead", 600, 400, 60, WHITE);
             DrawText("You have lived:", 460, 600, 60, WHITE);
-            const std::string m = std::to_string(GetTime());
-            const char *livetime = m.c_str();
-            DrawText(livetime, 925, 600, 60, WHITE);
+            DrawText(livetime.c_str(), 925, 600, 60, WHITE);
             EndDrawing();
 
         } else {
@@ -120,12 +118,11 @@ int main() {
             // DrawTextureRec(dino, frameRec, player.position, RED);
             DrawRectangleRec(playerRN, RED);
 
-            const std::string z = std::to_string(GetTime());
-            const char *g = z.c_str();
-            DrawText(g, 1500, 30, 20, DARKGRAY);
-            const std::string c = std::to_string(count);
-            const char *cc = c.c_str();
-            DrawText(cc, 1500, 60, 20, DARKGRAY);
+            const std::string time = fmt::format("{:.1f}", GetTime());
+            DrawText(time.c_str(), 1500, 30, 20, DARKGRAY);
+            if (player.dead == 1) {
+                livetime = time;
+            }
             EndDrawing();
         }
     }
