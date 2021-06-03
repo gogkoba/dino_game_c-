@@ -2,39 +2,40 @@
 #include <raylib-cpp.hpp>
 #include <string>
 
-int G = 625; // introduce gravity
-int PLAYER_JUMP_SPD = 700; // introduce the jump force
+int G = 625;
+int PLAYER_JUMP_SPD = 700;
 
-typedef struct Player { //creating a player structure
+typedef struct Player {
     Vector2 position;
     float speed;
     bool canJump;
     int dead;
 } Player;
 
-typedef struct EnvItem { // create the structure of the environment
+typedef struct EnvItem {
     Rectangle rect;
     Color color;
     float speed;
 } EnvItem;
 
-auto count = 0; // variable for calculating animation
-auto form = 0; // variable for determining the running posture
-std::string livetime = ""; // variable for outputting the result
-void Playernow(Player *player, EnvItem *envItems, int envItemsLength, // the function in which the states of the player and the environment are determined, their position changes.
+auto count = 0;
+auto form = 0;
+std::string livetime = "";
+
+void Playernow(Player *player, EnvItem *envItems, int envItemsLength,
                float delta) {
-    if (IsKeyDown(KEY_SPACE) && player->canJump == true) { // jump conditions
+    if (IsKeyDown(KEY_SPACE) && player->canJump == true) {
         player->speed = -PLAYER_JUMP_SPD;
         player->canJump = false;
     }
-    if (IsKeyDown(KEY_DOWN) && player->canJump == true && // conditions for changing the running position
+    if (IsKeyDown(KEY_DOWN) && player->canJump == true &&
         !IsKeyDown(KEY_SPACE)) {
         if (form == 0) {
             player->position.y += 50;
         }
         form = 1;
 
-    } else { // checking if you need to revert to standard form
+    } else {
         if (form == 1) {
             form = 0;
             player->position.y -= 50;
@@ -43,42 +44,42 @@ void Playernow(Player *player, EnvItem *envItems, int envItemsLength, // the fun
 
     auto stopmove = 0;
 
-    if (player->position.y + player->speed * delta >= 500) { // conditions for touching the floor and stopping falling
+    if (player->position.y + player->speed * delta >= 500) {
         player->speed = 0;
         player->canJump = true;
         stopmove = 1;
     }
 
-    for (int i = 1; i < envItemsLength; i++) { // loop for checking the touch of elements
-        auto xen = envItems[i].rect.x; 
+    for (int i = 1; i < envItemsLength; i++) {
+        auto xen = envItems[i].rect.x;
         auto yen = envItems[i].rect.y;
         auto width = envItems[i].rect.width;
         auto height = envItems[i].rect.height;
         auto plwidth = 150;
         auto plheight = 100;
-        if (form == 0) { 
+        if (form == 0) {
             plwidth = 100;
             plheight = 150;
         }
 
-        if (625 + plwidth >= (xen + envItems[i].speed * delta) && // the contact conditions themselves
+        if (625 + plwidth >= (xen + envItems[i].speed * delta) &&
             650 <= (xen + envItems[i].speed * delta + width) &&
             (player->position.y + player->speed * delta + plheight) >= yen &&
             (player->position.y + player->speed * delta) <= yen + height) {
             player->dead = 1;
         }
     }
-    player->position.y += player->speed * delta; // changing the position of the player
-    if (stopmove == 0) { // if the player is not on the floor, we accelerate him down
+    player->position.y += player->speed * delta;
+    if (stopmove == 0) {
         player->speed += G * delta;
     }
-    for (int i = 1; i < envItemsLength; i++) { //a loop that returns items as they go off the screen to the left
+    for (int i = 1; i < envItemsLength; i++) {
         envItems[i].rect.x += envItems[i].speed * delta;
         if (envItems[i].rect.x + envItems[i].rect.width < 0) {
             envItems[i].rect.x = std::rand() % 2000 + 1600;
         }
     }
-    for (int i = 1; i < envItemsLength; i++) { // conditions for increasing the difficulty of the game
+    for (int i = 1; i < envItemsLength; i++) {
         if (envItems[i].speed > -400) {
             envItems[i].speed -= 0.25;
         }
@@ -87,84 +88,89 @@ void Playernow(Player *player, EnvItem *envItems, int envItemsLength, // the fun
 
 int main() {
 
-    const int screenWidth = 1600; // indicate the size of the screen
+    const int screenWidth = 1600;
     const int screenHeight = 900;
 
-    raylib::Window window(screenWidth, screenHeight, "Dino"); // create a window with these parameters
+    raylib::Window window(screenWidth, screenHeight, "Dino");
 
-    Player player = {0}; // create a specific player
+    Player player = {0};
     player.position = {735, 500};
     player.speed = 0;
     player.canJump = false;
     player.dead = 0;
 
-    EnvItem envItems[] = {{{0, 650, 1600, 250}, DARKGRAY, 0}, // create specific objects of the environment
+    EnvItem envItems[] = {{{0, 650, 1600, 250}, DARKGRAY, 0},
                           {{1600, 450, 90, 200}, RED, -200},
                           {{2700, 350, 80, 50}, RED, -300}};
 
-    auto envItemsLength = sizeof(envItems) / sizeof(envItems[0]); 
+    auto envItemsLength = sizeof(envItems) / sizeof(envItems[0]);
 
-    Texture2D dino1 = LoadTexture("dino-1.png"); // loading textures
+    Texture2D dino1 = LoadTexture("dino-1.png");
     Texture2D dino2 = LoadTexture("dino-1(1).png");
     Texture2D dino3 = LoadTexture("dino-2.png");
     Texture2D dino4 = LoadTexture("dino-2(2).png");
 
-    SetTargetFPS(60); // fps of the game itself
+    SetTargetFPS(60);
 
-    while (!window.ShouldClose()) { // main loop
-        if (player.dead == 1) { // if the player is dead, display his results
+    while (!window.ShouldClose()) {
+        if (player.dead == 1) {
             BeginDrawing();
             ClearBackground(BLACK);
-            DrawText("You are dead", 600, 400, 60, WHITE);
-            DrawText("You have lived:", 460, 600, 60, WHITE);
-            DrawText(livetime.c_str(), 925, 600, 60, WHITE);
+            DrawText("You are dead", 600, 300, 60, WHITE);
+            DrawText("You have lived:", 460, 500, 60, WHITE);
+            DrawText(livetime.c_str(), 1025, 500, 60, WHITE);
+            DrawText("press space to continue", 400, 700, 60, WHITE);
+            if (IsKeyDown(KEY_SPACE)) {
+                window.Close();
+                main();
+            }
             EndDrawing();
 
         } else {
-            float deltaTime = GetFrameTime(); // parameter necessary for movement
-            Playernow(&player, envItems, envItemsLength, deltaTime); // updating the player state
+            float deltaTime = GetFrameTime();
+            Playernow(&player, envItems, envItemsLength, deltaTime);
             BeginDrawing();
 
-            ClearBackground(LIGHTGRAY); // paint the whole window gray
-            for (int i = 0; i < envItemsLength; i++) { //draw the whole environment
+            ClearBackground(LIGHTGRAY);
+            for (int i = 0; i < envItemsLength; i++) {
                 DrawRectangleRec(envItems[i].rect, envItems[i].color);
             }
 
-            if (form == 0) { // if the player is in the first form
+            if (form == 0) {
                 Rectangle playerRN = {650, player.position.y, 100, 150};
                 if (count < 10) {
-                    DrawTexture(dino1, 650, player.position.y, RED); // the player starts a step
+                    DrawTexture(dino1, 650, player.position.y, RED);
                     count += 1;
                 } else {
-                    DrawTexture(dino2, 650, player.position.y, RED); // the player finishes the step
+                    DrawTexture(dino2, 650, player.position.y, RED);
                     count += 1;
                     if (count == 20) {
                         count = 0;
                     }
                 }
-            } else { // if the player is in the second form
+            } else {
                 Rectangle playerRL = {650, player.position.y, 150, 100};
                 if (count < 10) {
-                    DrawTexture(dino3, 650, player.position.y, RED); // the player starts a step
+                    DrawTexture(dino3, 650, player.position.y, RED);
                     count += 1;
                 } else {
-                    DrawTexture(dino4, 650, player.position.y, RED); // the player finishes the step
-                    count += 1; 
+                    DrawTexture(dino4, 650, player.position.y, RED);
+                    count += 1;
                     if (count == 20) {
                         count = 0;
                     }
                 }
             }
 
-            const std::string time = fmt::format("{:.0f}", GetTime()); // determine the time of the game
+            const std::string time = fmt::format("{:.0f}", GetTime());
             DrawText(time.c_str(), 1500, 30, 20, DARKGRAY);
             if (player.dead == 1) {
-                livetime = time; // if the player is dead, record the time of his death
+                livetime = time;
             }
             EndDrawing();
         }
     }
-    UnloadTexture(dino1); // unload textures
+    UnloadTexture(dino1);
     UnloadTexture(dino2);
     UnloadTexture(dino3);
     UnloadTexture(dino4);
