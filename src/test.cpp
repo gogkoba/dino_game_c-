@@ -1,7 +1,7 @@
 #include "catch.hpp"
 #include "lib.hpp"
 
-TEST_CASE("doing nothing") {
+TEST_CASE("is dead after 4 sec") {
     Player player = {0};
     player.position = {735, 500};
     player.speed = 0;
