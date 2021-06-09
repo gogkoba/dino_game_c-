@@ -27,6 +27,24 @@ conan_cmake_run(
   ENV CONAN_CMAKE_PROGRAM="${CMAKE_COMMAND}" ${ENV}
   )
 
+set(DOXYGEN_GENERATE_XML YES)
+set(DOXYGEN_GENERATE_TREEVIEW YES)
+set(DOXYGEN_SOURCE_BROWSER YES)
+set(DOXYGEN_INLINE_SOURCES YES)
+set(DOXYGEN_HTML_EXTRA_STYLESHEET doxygen-awesome.css)
+find_package(Doxygen)
+doxygen_add_docs(Doxygen src)
+
+# Создавать документацию с помощью sphinx путь к документации: build/docs
+add_custom_target(
+  Sphinx
+  COMMAND
+    sphinx-build -b html ${CMAKE_CURRENT_LIST_DIR}/docs
+    ${CMAKE_CURRENT_BINARY_DIR}/docs
+    -Dbreathe_projects.Example=${CMAKE_CURRENT_BINARY_DIR}/xml
+  DEPENDS Doxygen
+  COMMENT "Generating documentation with Sphinx") 
+
 add_subdirectory(raylib-cpp EXCLUDE_FROM_ALL)
 enable_testing()
 add_subdirectory(external/doctest)
