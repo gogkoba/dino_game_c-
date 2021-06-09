@@ -3,17 +3,25 @@
 #include <string>
 
 ;
-int G = 625;               // introduce gravity
-int PLAYER_JUMP_SPD = 700; // introduce the jump force
-int form = 0;              // variable for determining the running posture
+int G = 625;               ///< gravitational constant
+int PLAYER_JUMP_SPD = 700; ///< jumping constant
+int form = 0;              ///< variable for determining the running posture
 
+/**
+ * the function in which the states of the
+ * player and the environment are determined,
+ * their position changes.
+ * \param player to work with the player's position
+ * \param envItems to work with the position of objects
+ * \param envItemsLength number of objects
+ * \param delta to measure time
+ * \param test for testing
+ * \
+ */
 void Playernow(Player *player, EnvItem *envItems, int envItemsLength,
-               float delta,
-               Testinf test) { // the function in which the states of the
-                               // player and the environment are determined,
-                               // their position changes.
+               float delta, Testinf test) {
     if ((IsKeyDown(KEY_SPACE) || test.space == 1) &&
-        player->canJump == true) { // jump conditions
+        player->canJump == true) { /// jump conditions
         player->speed = -PLAYER_JUMP_SPD;
         player->canJump = false;
     }
